@@ -25,7 +25,7 @@ type DataUser = {
 export const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export const AuthProvider = ({children}: AuthContextProps) => {
-    const [user, setUser] = useState<any>({});
+    const [user, setUser] = useState<any>(null);
     const [signed, setSigned] = useState<boolean>(false);
 
     const navigate = useNavigate();
