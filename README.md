@@ -25,7 +25,6 @@ Este é um site para a comunidade de **Left 4 Dead 2** que reúne uma coleção 
 
 ## 1. **Clone o repositório**:
 
-   ```bash
    git clone https://github.com/joaopedro-monteiro/audios-left4dead2.git
    cd l4d2-community-audio-hub
 ## 2. Instale as dependências:
