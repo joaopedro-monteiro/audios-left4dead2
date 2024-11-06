@@ -54,6 +54,12 @@ const AddAudioPage: React.FC = () => {
   }
 
   async function handleSubmit() {
+
+    if (!descricao || !autor || !audioFile) {
+      toast.error("Por favor, preencha todos os campos!");
+      return;
+    }
+
     audio.descricao = descricao;
     audio.autor = autor;
     audio.duracao = duracao;
@@ -124,7 +130,15 @@ const AddAudioPage: React.FC = () => {
         style={{ maxWidth: 600 }}
         onFinish={handleSubmit}
       >
-        <Form.Item label="Descrição do áudio">
+        <Form.Item
+          label="Descrição do áudio"
+          rules={[
+            {
+              required: true,
+              message: "Por favor, insira a descrição do áudio!",
+            },
+          ]}
+        >
           <TextArea
             rows={4}
             value={descricao}
@@ -132,7 +146,15 @@ const AddAudioPage: React.FC = () => {
           />
         </Form.Item>
         {isMobile ? (
-          <Form.Item label="Autor do áudio">
+          <Form.Item
+            label="Autor do áudio"
+            rules={[
+              {
+                required: true,
+                message: "Por favor, insira o nome do autor!",
+              },
+            ]}
+          >
             <Select
               value={autor}
               onChange={(value) => setAutor(value)}
@@ -144,11 +166,19 @@ const AddAudioPage: React.FC = () => {
                 </Select.Option>
               ))}
             </Select>
-              <br />
+            <br />
             <NovoAutor />
           </Form.Item>
         ) : (
-          <Form.Item label="Autor do áudio">
+          <Form.Item
+            label="Autor do áudio"
+            rules={[
+              {
+                required: true,
+                message: "Por favor, insira o nome do autor!",
+              },
+            ]}
+          >
             <Row gutter={8}>
               <Col span={18}>
                 <Select
@@ -170,7 +200,16 @@ const AddAudioPage: React.FC = () => {
           </Form.Item>
         )}
 
-        <Form.Item label="Upload" valuePropName="fileList">
+        <Form.Item
+          label="Upload"
+          valuePropName="fileList"
+          rules={[
+            {
+              required: true,
+              message: "Por favor, insira um áudio!",
+            },
+          ]}
+        >
           <input
             type="file"
             key={uploadKey}

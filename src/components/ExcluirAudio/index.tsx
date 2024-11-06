@@ -37,7 +37,7 @@ const ExcluirAudio: React.FC<ExcluirAudioProps> = ({ id }) => {
   return (
     <>
       <Tooltip title="Apagar">
-        <DeleteTwoTone onClick={showModal} />
+        <DeleteTwoTone onClick={showModal} twoToneColor="red"/>
       </Tooltip>
       <Modal
         title="Apagar áudio"
