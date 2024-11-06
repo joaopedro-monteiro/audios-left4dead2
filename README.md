@@ -1,4 +1,4 @@
-# L4D2 Áudio Hub 🎮🔊
+# L4D2 Áudio Hub 🎮🔊 - https://audiosl4d2.netlify.app/
 
 Este é um site para a comunidade de **Left 4 Dead 2** que reúne uma coleção de áudios memoráveis compartilhados em grupos de WhatsApp ao longo dos anos. O objetivo é permitir que todos os jogadores possam reviver esses momentos, ouvir e fazer download dos áudios e, para membros logados, adicionar e editar novos áudios.
 
