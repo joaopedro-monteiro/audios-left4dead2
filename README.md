@@ -74,6 +74,31 @@ do Node e os cabeçalhos de cache. Para ligar o deploy automático:
 > configuração web do Firebase, que é pública. Quem protege os dados são as regras do Firestore e
 > do Storage.
 
+## ⬇️ CORS do Storage (necessário para o botão de download)
+
+O botão de download baixa o arquivo com `fetch` + Blob — é o que permite salvar o áudio de verdade
+(e, no iPhone, abrir o compartilhamento do iOS). Para isso o bucket do Storage precisa liberar CORS
+para o domínio do site; sem essa liberação o botão continua funcionando, mas cai no plano B de abrir
+o áudio em outra aba.
+
+A configuração fica em `cors.json`. Para aplicar, o caminho mais rápido é o
+[Cloud Shell](https://console.cloud.google.com/) (já vem autenticado e com o `gsutil` instalado) —
+faça upload do `cors.json` e rode:
+
+```bash
+gsutil cors set cors.json gs://audios-left4dead.appspot.com
+```
+
+Para conferir se pegou:
+
+```bash
+gsutil cors get gs://audios-left4dead.appspot.com
+```
+
+Os áudios já são públicos (qualquer pessoa com o link ouve), então liberar leitura por CORS não expõe
+nada de novo. Se quiser que os Deploy Previews da Netlify também consigam baixar, acrescente `"*"` à
+lista de `origin`, já que os endereços de preview mudam a cada PR.
+
 ## 🔑 Estrutura de autenticação
 
 O sistema de autenticação protege as rotas de criação, edição e exclusão de áudios. Apenas usuários logados podem acessar essas funcionalidades, e o login pode ser feito diretamente na página /login.
