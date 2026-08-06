@@ -1,5 +1,5 @@
+import { createContext, useCallback, useMemo, useState } from "react";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
-import { createContext, useEffect, useState } from "react";
 import { db } from "../services/firebaseConnection";
 
 interface AutoresContextProps {
@@ -11,32 +11,22 @@ type AutoresContextType = {
   loadAutores: () => Promise<void>;
 };
 
-export const AutoresContext = createContext<AutoresContextType>(
-  {} as AutoresContextType
-);
+export const AutoresContext = createContext<AutoresContextType>({} as AutoresContextType);
 
 export const AutoresProvider = ({ children }: AutoresContextProps) => {
   const [autores, setAutores] = useState<string[]>([]);
 
-  async function loadAutores() {
-    const q = query(collection(db, "autores"), orderBy("nome", "asc"));
+  const loadAutores = useCallback(async () => {
+    try {
+      const consulta = query(collection(db, "autores"), orderBy("nome", "asc"));
+      const resultado = await getDocs(consulta);
+      setAutores(resultado.docs.map((documento) => documento.data().nome as string));
+    } catch (erro) {
+      console.error("Erro ao carregar os autores:", erro);
+    }
+  }, []);
 
-    const querySnapshot = await getDocs(q);
-    setAutores([]);
+  const valor = useMemo(() => ({ autores, loadAutores }), [autores, loadAutores]);
 
-    let listaAutores: string[] = [];
-
-    querySnapshot.forEach((doc) => {
-      listaAutores.push(doc.data().nome);
-    });
-
-    setAutores((autores) => [...autores, ...listaAutores]);
-    console.log("Autores carregados: ", autores);
-  }
-
-  return (
-    <AutoresContext.Provider value={{ autores, loadAutores }}>
-      {children}
-    </AutoresContext.Provider>
-  );
+  return <AutoresContext.Provider value={valor}>{children}</AutoresContext.Provider>;
 };

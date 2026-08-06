@@ -1,0 +1,172 @@
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  /* dvh evita o "pulo" da barra de endereço no celular */
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* ---------- cabeçalho ---------- */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(10, 11, 13, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding-top: env(safe-area-inset-top);
+}
+
+.app-header__inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: var(--header-h);
+}
+
+.marca {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: auto;
+  color: var(--text);
+  text-decoration: none;
+  min-width: 0;
+}
+.marca:hover {
+  color: var(--text);
+}
+.marca__simbolo {
+  flex: none;
+  filter: drop-shadow(0 2px 10px rgba(229, 50, 45, 0.45));
+  transition: transform 0.3s var(--ease);
+}
+.marca:hover .marca__simbolo {
+  transform: rotate(-8deg) scale(1.06);
+}
+.marca__texto {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.marca__texto span {
+  color: var(--accent);
+}
+
+.app-header__acoes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.app-header__nav--ativo {
+  border-color: var(--accent);
+  color: #ff8b87;
+  background: var(--accent-soft);
+}
+
+.app-header__usuario {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  max-width: 180px;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: var(--radius-full);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 13px;
+  font-weight: 600;
+}
+.app-header__usuario span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.app-header__usuario svg {
+  color: var(--accent);
+  flex: none;
+}
+
+/* ---------- conteúdo ---------- */
+.app-main {
+  flex: 1 0 auto;
+  width: 100%;
+  padding-block: clamp(18px, 3vw, 30px) 40px;
+}
+
+/* ---------- rodapé fixo no fim da página ---------- */
+.app-footer {
+  flex: none;
+  margin-top: auto;
+  border-top: 1px solid var(--border);
+  background: var(--bg-soft);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.app-footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 16px;
+  min-height: 56px;
+  padding-block: 12px;
+  color: var(--text-faint);
+  font-size: 13px;
+}
+.app-footer__creditos {
+  color: var(--text-dim);
+}
+
+.pular-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: 10px 16px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 0 0 var(--radius) 0;
+}
+.pular-link:focus {
+  left: 0;
+  color: #fff;
+}
+
+@media (max-width: 767px) {
+  .app-header__inner {
+    height: 56px;
+    gap: 8px;
+  }
+  .marca__texto {
+    font-size: 15px;
+  }
+  .app-header__nav-texto {
+    display: none;
+  }
+  .app-header__nav {
+    width: 34px;
+    padding: 0;
+  }
+  .app-header__usuario {
+    display: none;
+  }
+  .app-footer__inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    font-size: 12px;
+    min-height: 0;
+  }
+  .instalar-btn span {
+    display: none;
+  }
+  .instalar-btn {
+    width: 34px;
+    padding: 0;
+  }
+}

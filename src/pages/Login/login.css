@@ -1,33 +1,82 @@
-.container-background {
-    height: 100vh;
-    width: 100vw;
-    background-color: black;
+.login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 24px 16px calc(24px + env(safe-area-inset-bottom));
 }
 
-.container-login {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    height: 600px;
-    width: 400px;
-    background-color: #e6dddd;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 10px;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+.login__cartao {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  max-width: 380px;
+  padding: 32px 24px 26px;
+  border-radius: 22px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.9);
 }
 
-.logo {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100px;
-    width: 100px;
-    position: absolute;
-    top: 15%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+.login__cabecalho {
+  text-align: center;
+  margin-bottom: 4px;
+}
+.login__cabecalho h1 {
+  font-size: 20px;
+  font-weight: 800;
+}
+.login__cabecalho p {
+  margin: 6px 0 0;
+  color: var(--text-dim);
+  font-size: 13.5px;
+}
+
+.login__campo {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  color: var(--text-faint);
+}
+.login__campo svg {
+  position: absolute;
+  left: 13px;
+  pointer-events: none;
+}
+.login__campo input {
+  width: 100%;
+  height: 46px;
+  padding: 0 14px 0 42px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
+  background: var(--surface-2);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 15px;
+  transition: border-color 0.15s var(--ease), box-shadow 0.15s var(--ease);
+}
+.login__campo input::placeholder {
+  color: var(--text-faint);
+}
+.login__campo input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.login__cartao .btn {
+  min-height: 46px;
+  margin-top: 4px;
+}
+
+.login__voltar {
+  color: var(--text-faint);
+  font-size: 13px;
+}
+.login__voltar:hover {
+  color: var(--text-dim);
 }

@@ -1,51 +1,69 @@
-import { Button, Modal, Tooltip } from "antd";
+import { Modal, Tooltip } from "antd";
 import { useState } from "react";
-import { DeleteTwoTone } from "@ant-design/icons";
 import { deleteDoc, doc } from "firebase/firestore";
-import { db } from "../../infrastructure/services/firebaseConnection";
 import { toast } from "react-toastify";
+import { db } from "../../infrastructure/services/firebaseConnection";
+import { IconTrash } from "../Icons";
 
 interface ExcluirAudioProps {
   id: string;
+  descricao?: string;
 }
 
-const ExcluirAudio: React.FC<ExcluirAudioProps> = ({ id }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+const ExcluirAudio: React.FC<ExcluirAudioProps> = ({ id, descricao }) => {
+  const [aberto, setAberto] = useState(false);
+  const [excluindo, setExcluindo] = useState(false);
 
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleOk = async () => {
-    const docRef = doc(db, "audios", id);
-    await deleteDoc(docRef).then(() => {
+  const excluir = async () => {
+    setExcluindo(true);
+    try {
+      await deleteDoc(doc(db, "audios", id));
       toast.success("Áudio apagado com sucesso!");
-      console.log("Document successfully deleted!");
-    })
-    .catch((error) => {
-        console.error("Error removing document: ", error);
-        toast.error("Erro ao apagar áudio");
-    });
-
-    setIsModalOpen(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
+      setAberto(false);
+    } catch (erro) {
+      console.error("Erro ao apagar áudio: ", erro);
+      toast.error("Erro ao apagar o áudio.");
+    } finally {
+      setExcluindo(false);
+    }
   };
 
   return (
     <>
       <Tooltip title="Apagar">
-        <DeleteTwoTone onClick={showModal} twoToneColor="red"/>
+        <button
+          type="button"
+          className="btn btn--ghost btn--icon btn--sm btn--perigo"
+          onClick={() => setAberto(true)}
+          aria-label="Apagar áudio"
+        >
+          <IconTrash size={17} />
+        </button>
       </Tooltip>
+
       <Modal
         title="Apagar áudio"
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
+        open={aberto}
+        onOk={excluir}
+        onCancel={() => setAberto(false)}
+        okText="Apagar"
+        cancelText="Cancelar"
+        okButtonProps={{ danger: true }}
+        confirmLoading={excluindo}
       >
-        <p>Tem certeza que deseja apagar esse áudio?</p>
+        <p style={{ margin: 0, color: "var(--text-dim)" }}>
+          Tem certeza que deseja apagar
+          {descricao ? (
+            <>
+              {" "}
+              <strong style={{ color: "var(--text)" }}>“{descricao}”</strong>?
+            </>
+          ) : (
+            " esse áudio?"
+          )}
+          <br />
+          Essa ação não pode ser desfeita.
+        </p>
       </Modal>
     </>
   );

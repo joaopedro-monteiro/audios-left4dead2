@@ -1,0 +1,55 @@
+.hero {
+  padding-block: 4px 18px;
+}
+
+.hero__titulo {
+  font-size: clamp(24px, 5vw, 38px);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.hero__titulo span {
+  color: var(--accent);
+  text-shadow: 0 0 30px rgba(229, 50, 45, 0.45);
+}
+
+.hero__texto {
+  margin: 8px 0 0;
+  max-width: 60ch;
+  color: var(--text-dim);
+  font-size: clamp(14px, 2.2vw, 16px);
+}
+
+.hero__stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  color: var(--text-faint);
+  font-size: 13px;
+}
+.hero__stats strong {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.audio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+  align-items: start;
+}
+
+@media (max-width: 640px) {
+  .audio-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+.audio-card--esqueleto {
+  gap: 10px;
+  pointer-events: none;
+}

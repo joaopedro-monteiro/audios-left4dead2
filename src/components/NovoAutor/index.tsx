@@ -1,70 +1,85 @@
-import React, { useState } from "react";
-import { Button, Form, Input, Modal } from "antd";
-import { PlusCircleOutlined } from "@ant-design/icons";
+import React, { useContext, useState } from "react";
+import { Input, Modal } from "antd";
 import { addDoc, collection } from "firebase/firestore";
-import { db } from "../../infrastructure/services/firebaseConnection";
 import { toast } from "react-toastify";
+import { db } from "../../infrastructure/services/firebaseConnection";
+import { AutoresContext } from "../../infrastructure/context/autores";
+import { IconPlus } from "../Icons";
 
-const NovoAutor: React.FC = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [autor, setAutor] = useState<string>("");
+interface NovoAutorProps {
+  /** Chamado com o nome recém-criado, para já deixá-lo selecionado. */
+  onAutorCriado?: (nome: string) => void;
+  rotulo?: string;
+}
 
-  const showModal = () => {
-    setIsModalOpen(true);
+const NovoAutor: React.FC<NovoAutorProps> = ({ onAutorCriado, rotulo = "Novo autor" }) => {
+  const [aberto, setAberto] = useState(false);
+  const [nome, setNome] = useState("");
+  const [salvando, setSalvando] = useState(false);
+  const { autores, loadAutores } = useContext(AutoresContext);
+
+  const fechar = () => {
+    setAberto(false);
+    setNome("");
   };
 
-  const handleOk = async () => {
-    if (!autor) {
-      toast.error("Por favor, preencha o nome do autor.");
+  const salvar = async () => {
+    const nomeLimpo = nome.trim();
+    if (!nomeLimpo) {
+      toast.error("Digite o nome do autor.");
+      return;
+    }
+    if (autores.some((autor) => autor.toLowerCase() === nomeLimpo.toLowerCase())) {
+      toast.warning("Esse autor já está cadastrado.");
       return;
     }
 
+    setSalvando(true);
     try {
-      await addDoc(collection(db, "autores"), {
-        nome: autor,
-      });
-      toast.success("Autor adicionado com sucesso");
-      setAutor("");
-      setIsModalOpen(false);
-    } catch (error) {
-      console.error("Error adding document: ", error);
-      toast.error("Erro ao adicionar autor");
+      await addDoc(collection(db, "autores"), { nome: nomeLimpo });
+      await loadAutores();
+      onAutorCriado?.(nomeLimpo);
+      toast.success("Autor adicionado!");
+      fechar();
+    } catch (erro) {
+      console.error("Erro ao adicionar autor: ", erro);
+      toast.error("Erro ao adicionar o autor.");
+    } finally {
+      setSalvando(false);
     }
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-    setAutor("");
   };
 
   return (
     <>
-      <Button type="dashed" onClick={showModal}>
-        Adicionar novo autor <PlusCircleOutlined />
-      </Button>
+      <button type="button" className="btn" onClick={() => setAberto(true)}>
+        <IconPlus size={16} />
+        {rotulo}
+      </button>
+
       <Modal
         title="Adicionar autor"
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
+        open={aberto}
+        onOk={salvar}
+        onCancel={fechar}
+        okText="Adicionar"
+        cancelText="Cancelar"
+        confirmLoading={salvando}
+        destroyOnClose
       >
-        <Form
-          labelCol={{ span: 6 }}
-          wrapperCol={{ span: 14 }}
-          layout="horizontal"
-          style={{ maxWidth: 600 }}
-        >
-          <Form.Item label="Nome">
-            <Input
-              placeholder="Nome do autor"
-              value={autor}
-              onChange={(e) => {
-                console.log("Input Value: ", e.target.value); // Debugging
-                setAutor(e.target.value);
-              }}
-            />
-          </Form.Item>
-        </Form>
+        <div className="form-campo">
+          <label className="form-campo__label" htmlFor="novo-autor">
+            Nome do autor
+          </label>
+          <Input
+            id="novo-autor"
+            placeholder="Como ele é conhecido no grupo"
+            value={nome}
+            maxLength={40}
+            onChange={(evento) => setNome(evento.target.value)}
+            onPressEnter={salvar}
+            autoFocus
+          />
+        </div>
       </Modal>
     </>
   );
