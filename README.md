@@ -48,14 +48,31 @@ As credenciais ficam fora do Git. Copie o arquivo de exemplo e preencha com os d
 cp .env.example .env.local
 ```
 
-O arquivo `src/infrastructure/services/firebaseConnection.ts` (também fora do Git) lê essas variáveis.
-Na Netlify, cadastre as mesmas variáveis em *Site settings > Environment variables*.
+O arquivo `src/infrastructure/services/firebaseConnection.ts` só lê essas variáveis — nenhuma chave
+fica escrita no código.
 
 ### 4. Rode o projeto
 
 ```bash
 npm start
 ```
+
+## 🚢 Deploy contínuo (Netlify)
+
+O `netlify.toml` já traz o comando de build (`npm run build`), a pasta publicada (`build`), a versão
+do Node e os cabeçalhos de cache. Para ligar o deploy automático:
+
+1. Na Netlify: *Site configuration > Build & deploy > Continuous deployment* e conecte o repositório
+   do GitHub (ou crie o site em *Add new site > Import an existing project*).
+2. Em *Branches and deploy contexts*, deixe a **production branch** como `master` — é a branch
+   principal deste repositório.
+3. Em *Site configuration > Environment variables*, cadastre as mesmas variáveis do `.env.local`
+   (`REACT_APP_FIREBASE_*`). Sem elas o build passa, mas o site sobe sem Firebase.
+4. Pronto: cada push na `master` publica sozinho e cada Pull Request ganha um Deploy Preview.
+
+> Os valores `REACT_APP_*` entram no JavaScript enviado ao navegador — o que é esperado para a
+> configuração web do Firebase, que é pública. Quem protege os dados são as regras do Firestore e
+> do Storage.
 
 ## 🔑 Estrutura de autenticação
 
