@@ -1,92 +1,77 @@
-import { Button, Checkbox, Flex, Form, Input } from "antd";
-import "./login.css";
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useContext, useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../infrastructure/services/firebaseConnection";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../infrastructure/context/auth";
-import { sign } from "crypto";
+import { BrandMark, IconLock, IconMail } from "../../components/Icons";
+import "./login.css";
 
-export default function Login() {
+export default function Login(): JSX.Element {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [entrando, setEntrando] = useState(false);
 
   const { signIn } = useContext(AuthContext);
 
-  const onFinish = async () => {
-    if(email === "" || senha === "") {
-      toast.error("Preencha todos os campos");
+  const aoEnviar = async (evento: React.FormEvent) => {
+    evento.preventDefault();
+    if (!email.trim() || !senha) {
+      toast.error("Preencha e-mail e senha.");
       return;
     }
-    await signIn(email, senha);
-    // await signInWithEmailAndPassword(auth, email, senha)
-    //   .then(() => {
-    //     toast.success("Login efetuado com sucesso");
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //     toast.error("Email ou senha inválidos");
-    //   });
+
+    setEntrando(true);
+    try {
+      await signIn(email.trim(), senha);
+    } finally {
+      setEntrando(false);
+    }
   };
 
   return (
-    <div className="container-background">
-      <div className="container-login">
-        <img
-          className="logo"
-          src="https://firebasestorage.googleapis.com/v0/b/audios-left4dead.appspot.com/o/images%2Fleft%204%20dead%202%20icon.png?alt=media&token=e30a4615-ed47-404f-830d-d0eb1fcb62ca"
-          alt="Ícone do Left 4 Dead 2"
-        ></img>
-        <Form
-          name="login"
-          initialValues={{ remember: true }}
-          style={{ maxWidth: 360 }}
-          onFinish={onFinish}
-        >
-          <Form.Item
-            name="email"
-            rules={[{ required: true, message: "Por favor, digite o e-mail" }]}
-          >
-            <Input
-              prefix={<UserOutlined />}
-              type="email"
-              placeholder="E-mail"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
-            />
-          </Form.Item>
-          <Form.Item
-            name="password"
-            rules={[{ required: true, message: "Por favor, digite a senha" }]}
-          >
-            <Input
-              prefix={<LockOutlined />}
-              type="password"
-              placeholder="Senha"
-              value={senha}
-              onChange={(e) => {
-                setSenha(e.target.value);
-              }}
-            />
-          </Form.Item>
-          <Form.Item>
-            <Flex justify="space-between" align="center">
-              <Form.Item name="remember" valuePropName="checked" noStyle>
-                <Checkbox>Lembrar</Checkbox>
-              </Form.Item>
-            </Flex>
-          </Form.Item>
+    <div className="login">
+      <form className="login__cartao" onSubmit={aoEnviar}>
+        <BrandMark size={56} />
+        <div className="login__cabecalho">
+          <h1>Área da administração</h1>
+          <p>Entre para adicionar, editar e remover áudios.</p>
+        </div>
 
-          <Form.Item>
-            <Button block type="primary" htmlType="submit">
-              Entrar
-            </Button>
-          </Form.Item>
-        </Form>
-      </div>
+        <label className="login__campo">
+          <span className="sr-only">E-mail</span>
+          <IconMail size={18} />
+          <input
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            placeholder="E-mail"
+            value={email}
+            onChange={(evento) => setEmail(evento.target.value)}
+            disabled={entrando}
+          />
+        </label>
+
+        <label className="login__campo">
+          <span className="sr-only">Senha</span>
+          <IconLock size={18} />
+          <input
+            type="password"
+            autoComplete="current-password"
+            placeholder="Senha"
+            value={senha}
+            onChange={(evento) => setSenha(evento.target.value)}
+            disabled={entrando}
+          />
+        </label>
+
+        <button type="submit" className="btn btn--primary btn--block" disabled={entrando}>
+          {entrando ? <span className="btn-spinner" /> : null}
+          {entrando ? "Entrando..." : "Entrar"}
+        </button>
+
+        <Link to="/" className="login__voltar">
+          Voltar para os áudios
+        </Link>
+      </form>
     </div>
   );
 }

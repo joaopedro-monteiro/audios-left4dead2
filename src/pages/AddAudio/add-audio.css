@@ -1,0 +1,225 @@
+.upload {
+  max-width: 1080px;
+}
+
+.upload__topo {
+  margin-bottom: 20px;
+}
+.upload__titulo {
+  font-size: clamp(22px, 4vw, 30px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.upload__subtitulo {
+  margin: 6px 0 0;
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+.upload__sucesso {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(62, 207, 142, 0.35);
+  background: rgba(62, 207, 142, 0.1);
+  color: var(--success);
+  font-size: 14px;
+  font-weight: 600;
+}
+.upload__sucesso .btn {
+  margin-left: auto;
+}
+
+.upload__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.upload__coluna {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 20px;
+}
+/* o espaçamento aqui vem do gap do flex */
+.upload__coluna .form-campo + .form-campo {
+  margin-top: 0;
+}
+
+/* ---------- área de arrastar ---------- */
+.dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 28px 18px;
+  border: 1.5px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--surface-2);
+  color: var(--text-dim);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.18s var(--ease);
+}
+.dropzone:hover,
+.dropzone--ativo {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--text);
+}
+.dropzone--erro {
+  border-color: var(--accent);
+}
+.dropzone strong {
+  font-size: 15px;
+  color: var(--text);
+}
+.dropzone span {
+  font-size: 13px;
+}
+.dropzone__icone {
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+
+.arquivo-escolhido {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+.arquivo-escolhido__icone {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: none;
+  border-radius: var(--radius-sm);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.arquivo-escolhido__info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}
+.arquivo-escolhido__info strong {
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.arquivo-escolhido__info span {
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+/* ---------- prévia ---------- */
+.upload__previa {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-soft);
+}
+.upload__previa-rotulo {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+/* ---------- autor ---------- */
+.upload__autor {
+  display: flex;
+  gap: 8px;
+}
+.upload__autor-select {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ---------- progresso ---------- */
+.upload__progresso {
+  position: relative;
+  height: 34px;
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.upload__progresso-barra {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-press), var(--accent));
+  transition: width 0.2s var(--ease);
+}
+.upload__progresso-texto {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+.upload__acoes {
+  display: flex;
+  gap: 10px;
+  padding-top: 4px;
+}
+.upload__acoes .btn--primary {
+  flex: 1;
+}
+
+/* ---------- dicas ---------- */
+.upload__dicas {
+  padding: 20px;
+}
+.upload__dicas h2 {
+  font-size: 15px;
+  margin-bottom: 12px;
+}
+.upload__dicas ul {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding-left: 18px;
+  color: var(--text-dim);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+.upload__dicas li::marker {
+  color: var(--accent);
+}
+
+@media (max-width: 860px) {
+  .upload__grid {
+    grid-template-columns: 1fr;
+  }
+  .upload__coluna {
+    padding: 16px;
+  }
+  .upload__acoes {
+    flex-direction: column-reverse;
+  }
+  .upload__acoes .btn {
+    width: 100%;
+  }
+}

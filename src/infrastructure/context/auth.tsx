@@ -1,93 +1,83 @@
+import { createContext, useCallback, useMemo, useState } from "react";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { createContext, useEffect, useState } from "react";
-import { auth, db } from "../services/firebaseConnection";
 import { doc, getDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { auth, db } from "../services/firebaseConnection";
 
+const CHAVE_USUARIO = "@audiosL4D2:user";
 
 interface AuthContextProps {
-    children: React.ReactNode;
-}
-
-interface AuthContextType {
-    signed: boolean;
-    user: any;
-    signIn: (email: string, password: string) => Promise<void>;
-    logout: () => Promise<void>;
+  children: React.ReactNode;
 }
 
 type DataUser = {
-    uid: string;
-    email: string | null;
-    nome: string;
+  uid: string;
+  email: string | null;
+  nome: string;
+};
+
+interface AuthContextType {
+  signed: boolean;
+  user: DataUser | null;
+  signIn: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
 }
+
 export const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
-export const AuthProvider = ({children}: AuthContextProps) => {
-    const [user, setUser] = useState<any>(null);
-    const [signed, setSigned] = useState<boolean>(false);
-
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        async function loadUser() {
-            const userStorage = localStorage.getItem("@audiosL4D2:user");
-            if(userStorage) {
-                setUser(JSON.parse(userStorage));
-                console.log("User: ", user);
-                console.log("UserStorage: ", userStorage);
-                console.log("Signed?", signed)
-            }            
-        }
-        loadUser();
-    }, []);
-
-    async function signIn(email: string, password: string) {
-        await signInWithEmailAndPassword(auth, email, password)
-        .then(async(value) => {
-            let uid = value.user.uid;
-            const docRef = doc(db, "users", uid);
-            const docSnap = await getDoc(docRef);          
-
-            let data: DataUser = {
-                uid: uid,
-                email: value.user.email,
-                nome: docSnap.data()?.nome,
-            }
-
-            setUser(data);
-            storageUser(data);
-            // setSigned(true);
-            toast.success("Login efetuado com sucesso");
-            navigate("/");
-        })
-        .catch((error) => {
-            console.log(error);
-            toast.error("Email ou senha inválidos");
-        });
-    }
-
-    function storageUser(data: DataUser) {
-        localStorage.setItem("@audiosL4D2:user", JSON.stringify(data));
-      }
-
-      async function logout(){
-        await signOut(auth);
-        localStorage.removeItem("@audiosL4D2:user");
-        setUser(null);        
-        setSigned(false);
-        toast.success("Logout efetuado com sucesso");
-      }
-
-    return (
-        <AuthContext.Provider value={{
-            signed: !!user,
-            user,
-            signIn,
-            logout
-        }}>
-            {children}
-        </AuthContext.Provider>
-    );
+function usuarioSalvo(): DataUser | null {
+  try {
+    const salvo = localStorage.getItem(CHAVE_USUARIO);
+    return salvo ? (JSON.parse(salvo) as DataUser) : null;
+  } catch {
+    return null;
+  }
 }
+
+export const AuthProvider = ({ children }: AuthContextProps) => {
+  // Lido já na primeira renderização: assim uma rota privada não redireciona
+  // por engano quando a página é recarregada com o usuário logado.
+  const [user, setUser] = useState<DataUser | null>(usuarioSalvo);
+  const navigate = useNavigate();
+
+  const signIn = useCallback(
+    async (email: string, password: string) => {
+      try {
+        const credencial = await signInWithEmailAndPassword(auth, email, password);
+        const uid = credencial.user.uid;
+        const documento = await getDoc(doc(db, "users", uid));
+
+        const dados: DataUser = {
+          uid,
+          email: credencial.user.email,
+          nome: documento.data()?.nome ?? "Admin",
+        };
+
+        setUser(dados);
+        localStorage.setItem(CHAVE_USUARIO, JSON.stringify(dados));
+        toast.success(`Bem-vindo, ${dados.nome}!`);
+        navigate("/");
+      } catch (erro) {
+        console.error("Erro ao entrar:", erro);
+        toast.error("E-mail ou senha inválidos.");
+      }
+    },
+    [navigate]
+  );
+
+  const logout = useCallback(async () => {
+    await signOut(auth);
+    localStorage.removeItem(CHAVE_USUARIO);
+    setUser(null);
+    toast.success("Você saiu da conta.");
+    navigate("/");
+  }, [navigate]);
+
+  const valor = useMemo<AuthContextType>(
+    () => ({ signed: !!user, user, signIn, logout }),
+    [user, signIn, logout]
+  );
+
+  return <AuthContext.Provider value={valor}>{children}</AuthContext.Provider>;
+};

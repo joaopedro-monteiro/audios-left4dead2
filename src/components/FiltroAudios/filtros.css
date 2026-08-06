@@ -1,0 +1,191 @@
+/* barra que acompanha a rolagem, logo abaixo do cabeçalho */
+.filtros-barra {
+  position: sticky;
+  top: calc(var(--header-h) + env(safe-area-inset-top));
+  z-index: 40;
+  margin-bottom: 18px;
+  padding-block: 12px;
+  background: rgba(10, 11, 13, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+
+.filtros {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filtros__linha {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ---- busca ---- */
+.campo-busca {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+.campo-busca__icone {
+  position: absolute;
+  left: 13px;
+  color: var(--text-faint);
+  pointer-events: none;
+}
+.campo-busca__input {
+  width: 100%;
+  height: 42px;
+  padding: 0 40px 0 40px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 15px; /* 16px-ish evita zoom automático no iOS */
+  transition: border-color 0.15s var(--ease), box-shadow 0.15s var(--ease);
+  appearance: none;
+}
+.campo-busca__input::placeholder {
+  color: var(--text-faint);
+}
+.campo-busca__input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.campo-busca__input::-webkit-search-cancel-button {
+  display: none;
+}
+.campo-busca__limpar {
+  position: absolute;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--surface-3);
+  color: var(--text-dim);
+  cursor: pointer;
+}
+.campo-busca__limpar:hover {
+  color: var(--text);
+  background: #333941;
+}
+
+/* ---- selects e chips ---- */
+.filtros__controles {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* deixa os dois selects exatamente com a mesma altura do campo de busca */
+.filtros__select.ant-select .ant-select-selector {
+  min-height: 42px !important;
+  border-radius: var(--radius) !important;
+}
+.filtros__select.ant-select-single .ant-select-selector {
+  height: 42px !important;
+}
+.filtros__select.ant-select-single .ant-select-selection-item,
+.filtros__select.ant-select-single .ant-select-selection-placeholder {
+  line-height: 40px !important;
+}
+.filtros__select--autores {
+  min-width: 210px;
+  max-width: 280px;
+}
+.filtros__select--ordenacao {
+  min-width: 170px;
+}
+
+.filtros__opcao {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.filtros__opcao-total {
+  color: var(--text-faint);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.filtros .filtros__favoritos {
+  height: 42px;
+  padding-inline: 14px;
+}
+.filtros__contador {
+  display: inline-grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: var(--radius-full);
+  background: var(--surface-3);
+  color: var(--text-dim);
+  font-size: 11px;
+}
+.chip--active .filtros__contador {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ---- resumo ---- */
+.filtros__resumo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--text-faint);
+}
+.filtros__resumo strong {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.filtros__limpar {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.filtros__limpar:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+/* ---- celular ---- */
+@media (max-width: 900px) {
+  .filtros__linha {
+    flex-wrap: wrap;
+  }
+  .campo-busca {
+    flex-basis: 100%;
+  }
+  .filtros__controles {
+    width: 100%;
+  }
+  .filtros__select--autores,
+  .filtros__select--ordenacao {
+    flex: 1;
+    min-width: 0;
+    max-width: none;
+  }
+  .filtros__favoritos-texto {
+    display: none;
+  }
+  .filtros__favoritos {
+    padding-inline: 12px;
+  }
+}

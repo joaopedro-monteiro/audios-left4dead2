@@ -1,19 +1,19 @@
 import { useContext } from "react";
-import { AuthContext } from "../infrastructure/context/auth";
 import { Navigate } from "react-router-dom";
+import { AuthContext } from "../infrastructure/context/auth";
 
 interface PrivateProps {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }
 
-const Private = ({children}: PrivateProps) => {
-    const { signed } = useContext(AuthContext);
+const Private = ({ children }: PrivateProps): JSX.Element => {
+  const { signed } = useContext(AuthContext);
 
-    if(!signed) {
-        return <Navigate to="/"/>
-    }
+  if (!signed) {
+    return <Navigate to="/" replace />;
+  }
 
-    return children;
-}
+  return <>{children}</>;
+};
 
 export default Private;

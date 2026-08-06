@@ -1,10 +1,10 @@
-import { Button, Form, Input, Modal, Select, Tooltip } from "antd";
+import { Modal, Input, Select, Tooltip } from "antd";
 import { useContext, useState } from "react";
-import { EditTwoTone } from "@ant-design/icons";
-import { AutoresContext } from "../../infrastructure/context/autores";
 import { doc, updateDoc } from "firebase/firestore";
-import { db } from "../../infrastructure/services/firebaseConnection";
 import { toast } from "react-toastify";
+import { AutoresContext } from "../../infrastructure/context/autores";
+import { db } from "../../infrastructure/services/firebaseConnection";
+import { IconEdit } from "../Icons";
 
 interface EditarAudioProps {
   id: string;
@@ -12,77 +12,94 @@ interface EditarAudioProps {
   atorAtual: string;
 }
 
-const EditarAudio: React.FC<EditarAudioProps> = ({id, descricaoAtual, atorAtual}) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const[descricao, setDescricao] = useState<string>(descricaoAtual);
-  const[autorSelected, setAutorSelected] = useState<string>(atorAtual);
+const EditarAudio: React.FC<EditarAudioProps> = ({ id, descricaoAtual, atorAtual }) => {
+  const [aberto, setAberto] = useState(false);
+  const [salvando, setSalvando] = useState(false);
+  const [descricao, setDescricao] = useState<string>(descricaoAtual);
+  const [autor, setAutor] = useState<string>(atorAtual);
 
   const { autores, loadAutores } = useContext(AutoresContext);
 
-  const showModal = () => {
-    setIsModalOpen(true);
+  const abrir = () => {
+    setDescricao(descricaoAtual);
+    setAutor(atorAtual);
+    setAberto(true);
+    loadAutores();
   };
 
-  const handleOk = async () => {
-    const docRef = doc(db, "audios", id);
-    await updateDoc(docRef, {
-      descricao: descricao,
-      autor: autorSelected,
-    })
-    .then(() => {
+  const semAlteracao = descricao.trim() === descricaoAtual && autor === atorAtual;
+
+  const salvar = async () => {
+    if (!descricao.trim()) {
+      toast.error("A descrição não pode ficar vazia.");
+      return;
+    }
+
+    setSalvando(true);
+    try {
+      await updateDoc(doc(db, "audios", id), {
+        descricao: descricao.trim(),
+        autor,
+      });
       toast.success("Áudio editado com sucesso!");
-    })
-    .catch((error) => {
-      console.error("Erro ao edtir áudio: ", error);
-      toast.error("Erro ao editar áudio");
-    });
-
-    setIsModalOpen(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
+      setAberto(false);
+    } catch (erro) {
+      console.error("Erro ao editar áudio: ", erro);
+      toast.error("Erro ao editar o áudio.");
+    } finally {
+      setSalvando(false);
+    }
   };
 
   return (
     <>
-    <Tooltip title="Editar"><EditTwoTone onClick={showModal}/></Tooltip>      
+      <Tooltip title="Editar">
+        <button type="button" className="btn btn--ghost btn--icon btn--sm" onClick={abrir} aria-label="Editar áudio">
+          <IconEdit size={17} />
+        </button>
+      </Tooltip>
+
       <Modal
-        title="Editar Áudio"
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
+        title="Editar áudio"
+        open={aberto}
+        onOk={salvar}
+        onCancel={() => setAberto(false)}
+        okText="Salvar"
+        cancelText="Cancelar"
+        confirmLoading={salvando}
+        okButtonProps={{ disabled: semAlteracao || !descricao.trim() }}
+        destroyOnClose
       >
-        <Form
-          labelCol={{ span: 6 }}
-          wrapperCol={{ span: 14 }}
-          layout="horizontal"
-          style={{ maxWidth: 600 }}
-        >
-          <Form.Item label="Descrição">
-            <Input
-              placeholder="Descrição do áudio"
-              value={descricao}
-              onChange={(e) => {
-                console.log("Input Value: ", e.target.value); // Debugging
-                setDescricao(e.target.value);
-              }}
-            />
-          </Form.Item>
-          <Form.Item label="Autor">
+        <div className="form-campo">
+          <label className="form-campo__label" htmlFor={`descricao-${id}`}>
+            Descrição
+          </label>
+          <Input.TextArea
+            id={`descricao-${id}`}
+            autoSize={{ minRows: 2, maxRows: 4 }}
+            maxLength={140}
+            showCount
+            value={descricao}
+            onChange={(e) => setDescricao(e.target.value)}
+            placeholder="Do que se trata esse áudio?"
+          />
+        </div>
+
+        <div className="form-campo">
+          <label className="form-campo__label" htmlFor={`autor-${id}`}>
+            Autor
+          </label>
           <Select
-              value={autorSelected}
-              onChange={(value) => setAutorSelected(value)} 
-              onDropdownVisibleChange={loadAutores}             
-            >
-              {autores.map((autor) => (
-                <Select.Option key={autor} value={autor}>
-                  {autor}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-        </Form>
+            id={`autor-${id}`}
+            style={{ width: "100%" }}
+            value={autor || undefined}
+            onChange={setAutor}
+            showSearch
+            placeholder="Selecione o autor"
+            optionFilterProp="label"
+            options={autores.map((nome) => ({ value: nome, label: nome }))}
+          />
+        </div>
       </Modal>
     </>
   );
