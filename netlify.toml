@@ -9,6 +9,13 @@
 [build.environment]
   NODE_VERSION = "20"
 
+  # A varredura de segredos da Netlify falha o build quando acha o valor de uma
+  # variável de ambiente dentro dos arquivos publicados. A configuração web do
+  # Firebase é justamente feita para ir no JavaScript do navegador — ela é
+  # pública, e quem protege os dados são as regras do Firestore e do Storage.
+  # Por isso essas chaves ficam de fora da varredura.
+  SECRETS_SCAN_OMIT_KEYS = "REACT_APP_FIREBASE_API_KEY,REACT_APP_FIREBASE_AUTH_DOMAIN,REACT_APP_FIREBASE_PROJECT_ID,REACT_APP_FIREBASE_STORAGE_BUCKET,REACT_APP_FIREBASE_MESSAGING_SENDER_ID,REACT_APP_FIREBASE_APP_ID"
+
 # O redirecionamento de SPA (todas as rotas para o index.html) fica em
 # public/_redirects, que o build copia para a raiz do site.
 
